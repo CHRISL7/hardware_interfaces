@@ -77,9 +77,6 @@ using ::aidl::android::hardware::camera::device::StreamBuffer;
 using ::aidl::android::hardware::camera::device::StreamBufferRet;
 using ::aidl::android::hardware::camera::device::StreamConfiguration;
 using ::aidl::android::hardware::camera::device::StreamConfigurationMode;
-using ::aidl::android::hardware::camera::metadata::RequestAvailableColorSpaceProfilesMap;
-using ::aidl::android::hardware::camera::metadata::RequestAvailableDynamicRangeProfilesMap;
-using ::aidl::android::hardware::camera::metadata::ScalerAvailableStreamUseCases;
 using ::aidl::android::hardware::camera::provider::ConcurrentCameraIdCombination;
 using ::aidl::android::hardware::camera::provider::ICameraProvider;
 
@@ -208,12 +205,10 @@ class CameraAidlTest : public ::testing::TestWithParam<std::string> {
             bool* supportsPartialResults /*out*/, int32_t* partialResultCount /*out*/,
             bool* useHalBufManager /*out*/, std::shared_ptr<DeviceCb>* outCb /*out*/,
             uint32_t streamConfigCounter, bool maxResolution,
-            RequestAvailableDynamicRangeProfilesMap dynamicRangeProf =
-                    RequestAvailableDynamicRangeProfilesMap::
-                            ANDROID_REQUEST_AVAILABLE_DYNAMIC_RANGE_PROFILES_MAP_STANDARD,
-            RequestAvailableColorSpaceProfilesMap colorSpaceProf =
-                    RequestAvailableColorSpaceProfilesMap::
-                            ANDROID_REQUEST_AVAILABLE_COLOR_SPACE_PROFILES_MAP_UNSPECIFIED);
+            aidl::android::hardware::camera::metadata::RequestAvailableDynamicRangeProfilesMap
+                    prof = ::aidl::android::hardware::camera::metadata::
+                            RequestAvailableDynamicRangeProfilesMap::
+                                    ANDROID_REQUEST_AVAILABLE_DYNAMIC_RANGE_PROFILES_MAP_STANDARD);
 
     void configurePreviewStreams(
             const std::string& name, const std::shared_ptr<ICameraProvider>& provider,
@@ -381,7 +376,8 @@ class CameraAidlTest : public ::testing::TestWithParam<std::string> {
 
     static void get10BitDynamicRangeProfiles(
             const camera_metadata_t* staticMeta,
-            std::vector<RequestAvailableDynamicRangeProfilesMap>* profiles);
+            std::vector<aidl::android::hardware::camera::metadata::
+                                RequestAvailableDynamicRangeProfilesMap>* profiles);
 
     static bool reportsColorSpaces(const camera_metadata_t* staticMeta);
 
@@ -391,13 +387,17 @@ class CameraAidlTest : public ::testing::TestWithParam<std::string> {
                                 RequestAvailableColorSpaceProfilesMap>* profiles);
 
     static bool isColorSpaceCompatibleWithDynamicRangeAndPixelFormat(
-            const camera_metadata_t* staticMeta, RequestAvailableColorSpaceProfilesMap colorSpace,
+            const camera_metadata_t* staticMeta,
+            aidl::android::hardware::camera::metadata::
+            RequestAvailableColorSpaceProfilesMap colorSpace,
+            aidl::android::hardware::camera::metadata::
             RequestAvailableDynamicRangeProfilesMap dynamicRangeProfile,
             aidl::android::hardware::graphics::common::PixelFormat pixelFormat);
 
-    static const char* getColorSpaceProfileString(RequestAvailableColorSpaceProfilesMap colorSpace);
+    static const char* getColorSpaceProfileString(aidl::android::hardware::camera::metadata::
+            RequestAvailableColorSpaceProfilesMap colorSpace);
 
-    static const char* getDynamicRangeProfileString(
+    static const char* getDynamicRangeProfileString(aidl::android::hardware::camera::metadata::
             RequestAvailableDynamicRangeProfilesMap dynamicRangeProfile);
 
     static int32_t halFormatToPublicFormat(
@@ -408,8 +408,10 @@ class CameraAidlTest : public ::testing::TestWithParam<std::string> {
 
     static Size getMinSize(Size a, Size b);
 
-    void processColorSpaceRequest(RequestAvailableColorSpaceProfilesMap colorSpace,
-                                  RequestAvailableDynamicRangeProfilesMap dynamicRangeProfile);
+    void processColorSpaceRequest(aidl::android::hardware::camera::metadata::
+            RequestAvailableColorSpaceProfilesMap colorSpace,
+            aidl::android::hardware::camera::metadata::
+            RequestAvailableDynamicRangeProfilesMap dynamicRangeProfile);
 
     void processZoomSettingsOverrideRequests(
             int32_t frameCount, const bool *overrideSequence, const bool *expectedResults);
@@ -569,8 +571,10 @@ class CameraAidlTest : public ::testing::TestWithParam<std::string> {
     static bool matchDeviceName(const std::string& deviceName, const std::string& providerType,
                                 std::string* deviceVersion, std::string* cameraId);
 
-    static void verify10BitMetadata(HandleImporter& importer, const InFlightRequest& request,
-                                    RequestAvailableDynamicRangeProfilesMap profile);
+    static void verify10BitMetadata(
+            HandleImporter& importer, const InFlightRequest& request,
+            aidl::android::hardware::camera::metadata::RequestAvailableDynamicRangeProfilesMap
+                    profile);
 
     static void waitForReleaseFence(
             std::vector<InFlightRequest::StreamBufferAndTimestamp>& resultOutputBuffers);

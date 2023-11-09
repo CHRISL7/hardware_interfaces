@@ -961,7 +961,10 @@ TEST_P(AttestKeyTest, EcdsaAttestationMismatchID) {
         vector<Certificate> attested_key_cert_chain;
         auto result = GenerateKey(builder, attest_key, &attested_key_blob,
                                   &attested_key_characteristics, &attested_key_cert_chain);
-        device_id_attestation_check_acceptable_error(invalid_tag.tag, result);
+
+        ASSERT_TRUE(result == ErrorCode::CANNOT_ATTEST_IDS || result == ErrorCode::INVALID_TAG)
+                << "result = " << result;
+        device_id_attestation_vsr_check(result);
     }
     CheckedDeleteKey(&attest_key.keyBlob);
 }
@@ -1022,6 +1025,8 @@ TEST_P(AttestKeyTest, SecondIMEIAttestationIDSuccess) {
     }
 
     ASSERT_EQ(result, ErrorCode::OK);
+
+    device_id_attestation_vsr_check(result);
 
     CheckedDeleteKey(&attested_key_blob);
 
@@ -1101,6 +1106,8 @@ TEST_P(AttestKeyTest, MultipleIMEIAttestationIDSuccess) {
     }
 
     ASSERT_EQ(result, ErrorCode::OK);
+
+    device_id_attestation_vsr_check(result);
 
     CheckedDeleteKey(&attested_key_blob);
 

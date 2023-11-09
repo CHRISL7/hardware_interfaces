@@ -129,11 +129,6 @@ bool isVoiceInService(RegState state);
  */
 bool isServiceValidForDeviceConfiguration(std::string& serviceName);
 
-/*
- * Check if device is in Lte Connected status.
- */
-bool isLteConnected();
-
 /**
  * RadioServiceTest base class
  */

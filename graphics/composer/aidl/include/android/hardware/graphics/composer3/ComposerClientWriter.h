@@ -57,13 +57,13 @@ using aidl::android::hardware::common::NativeHandle;
 
 namespace aidl::android::hardware::graphics::composer3 {
 
-class ComposerClientWriter final {
+class ComposerClientWriter {
   public:
     static constexpr std::optional<ClockMonotonicTimestamp> kNoTimestamp = std::nullopt;
 
     explicit ComposerClientWriter(int64_t display) : mDisplay(display) { reset(); }
 
-    ~ComposerClientWriter() { reset(); }
+    virtual ~ComposerClientWriter() { reset(); }
 
     ComposerClientWriter(ComposerClientWriter&&) = default;
 

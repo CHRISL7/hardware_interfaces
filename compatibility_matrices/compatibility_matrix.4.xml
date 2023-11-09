@@ -371,7 +371,7 @@
         that can handle version 1.2 of IRadioConfigResponse and
         IRadioConfigIndication.
         -->
-        <version>1.0-1</version>
+        <version>1.1</version>
         <interface>
             <name>IRadioConfig</name>
             <instance>default</instance>
@@ -505,6 +505,7 @@
         <interface>
             <name>IHostapd</name>
             <instance>default</instance>
+            <instance>wigighostapd</instance>
         </interface>
     </hal>
     <hal format="hidl" optional="true">

@@ -38,13 +38,11 @@ cc_binary {
     name: "android.hardware.audio.service",
 
     init_rc: ["android.hardware.audio.service.rc"],
-    vintf_fragments: ["android.hardware.audio.sounddose-aidl.xml"],
     relative_install_path: "hw",
     vendor: true,
 
     defaults: [
         "android_hardware_audio_config_defaults",
-        "latest_android_hardware_audio_sounddose_ndk_shared",
     ],
 
     srcs: ["service.cpp"],
@@ -56,14 +54,52 @@ cc_binary {
     ],
 
     shared_libs: [
-        "//hardware/interfaces/audio/aidl/sounddose/default:libsounddoseserviceexampleimpl",
         "libcutils",
         "libbinder",
         "libbinder_ndk",
+        "libhwbinder",
         "libhidlbase",
         "liblog",
         "libutils",
         "libhardware",
+    ],
+    arch : {
+        arm : {
+	    cflags: [
+                "-DARCH_ARM_32",
+	    ]
+	}
+    },
+}
+
+cc_binary {
+    name: "android.hardware.audio.service_64",
+
+    init_rc: ["android.hardware.audio.service_64.rc"],
+    relative_install_path: "hw",
+    vendor: true,
+    compile_multilib: "64",
+    srcs: ["service.cpp"],
+
+    cflags: [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+    ],
+
+    shared_libs: [
+        "libcutils",
+        "libbinder",
+        "libbinder_ndk",
+        "libhwbinder",
+        "libhidlbase",
+        "liblog",
+        "libutils",
+        "libhardware",
+    ],
+
+    defaults: [
+        "android_hardware_audio_config_defaults",
     ],
 }
 
@@ -71,4 +107,8 @@ cc_binary {
 phony {
     name: "android.hardware.audio@2.0-service",
     required: ["android.hardware.audio.service"],
+}
+phony {
+    name: "android.hardware.audio@2.0-service_64",
+    required: ["android.hardware.audio.service_64"],
 }

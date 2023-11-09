@@ -48,6 +48,7 @@ class CameraModule : public RefBase {
     // Returns OK on success, NO_INIT on failure
     int init();
 
+    int getCameraDeviceVersion(int cameraId, uint32_t* version);
     int getCameraInfo(int cameraId, struct camera_info* info);
     int getDeviceVersion(int cameraId);
     int getNumberOfCameras(void);

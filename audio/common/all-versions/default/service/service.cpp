@@ -20,10 +20,6 @@
 #include <string>
 #include <vector>
 
-#include <SoundDoseFactory.h>
-#include <android-base/logging.h>
-#include <android/binder_ibinder_platform.h>
-#include <android/binder_manager.h>
 #include <android/binder_process.h>
 #include <binder/ProcessState.h>
 #include <cutils/properties.h>
@@ -37,7 +33,17 @@ using android::OK;
 
 using InterfacesList = std::vector<std::string>;
 
-using aidl::android::hardware::audio::sounddose::SoundDoseFactory;
+#ifdef ARCH_ARM_32
+//default h/w binder memsize is 1 MB
+#define DEFAULT_HW_BINDER_MEM_SIZE_KB 1024
+
+size_t getHWBinderMmapSize(){
+    int32_t value = DEFAULT_HW_BINDER_MEM_SIZE_KB;
+    value = property_get_int32("persist.vendor.audio.hw.binder.size_kbyte", value);
+    ALOGD("Init hw binder with mem  size = %d  ", value);
+    return 1024 * value;
+}
+#endif
 
 /** Try to register the provided factories in the provided order.
  *  If any registers successfully, do not register any other and return true.
@@ -80,6 +86,9 @@ static bool registerExternalServiceImplementation(const std::string& libName,
 
 int main(int /* argc */, char* /* argv */ []) {
     signal(SIGPIPE, SIG_IGN);
+#ifdef ARCH_ARM_32
+    android::hardware::ProcessState::initWithMmapSize(getHWBinderMmapSize());
+#endif
 
     if (::android::ProcessState::isVndservicemanagerEnabled()) {
         ::android::ProcessState::initWithDriver("/dev/vndbinder");
@@ -144,6 +153,10 @@ int main(int /* argc */, char* /* argv */ []) {
             "android.hardware.bluetooth.audio-impl",
             "createIBluetoothAudioProviderFactory",
         },
+        {
+            "android.hardware.audio.sounddose-vendor-impl",
+            "createISoundDoseFactory",
+        },
     };
     // clang-format on
 
@@ -170,14 +183,6 @@ int main(int /* argc */, char* /* argv */ []) {
             ALOGW("%s() from %s failed", interfaceLoaderFuncName.c_str(), libraryName.c_str());
         }
     }
-
-    // Register ISoundDoseFactory interface as a workaround for using the audio AIDL HAL
-    auto soundDoseDefault = ndk::SharedRefBase::make<SoundDoseFactory>();
-    const std::string soundDoseDefaultName =
-            std::string() + SoundDoseFactory::descriptor + "/default";
-    binder_status_t status = AServiceManager_addService(soundDoseDefault->asBinder().get(),
-                                                        soundDoseDefaultName.c_str());
-    CHECK_EQ(STATUS_OK, status);
 
     joinRpcThreadpool();
 }

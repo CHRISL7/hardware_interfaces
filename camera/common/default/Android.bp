@@ -37,6 +37,7 @@ cc_library_static {
     ],
     include_dirs: ["system/media/private/camera/include"],
     export_include_dirs: ["include"],
+    sdclang: false,
 }
 
 // NOTE: Deprecated module kept for compatibility reasons.
@@ -45,4 +46,5 @@ cc_library_static {
     name: "android.hardware.camera.common@1.0-helper",
     vendor_available: true,
     whole_static_libs: ["android.hardware.camera.common-helper"],
+    sdclang: false,
 }

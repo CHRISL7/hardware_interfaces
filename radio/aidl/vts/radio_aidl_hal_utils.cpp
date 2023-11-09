@@ -240,7 +240,3 @@ void RadioServiceTest::updateSimSlotStatus(int physicalSlotId) {
         slotStatus = radioConfigRsp->simSlotStatus[physicalSlotId];
     }
 }
-
-bool isLteConnected(){
-    return testing::checkSubstringInCommandOutput("getprop gsm.network.type", "LTE");
-}

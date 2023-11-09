@@ -1,5 +1,5 @@
 //
-// Copyright (C) 2016 The Android Open Source Project
+// Copyright (C) 2020 The Android Open Source Project
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,6 +12,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+//
 
 package {
     // See: http://go/android-license-faq
@@ -22,42 +23,20 @@ package {
     default_applicable_licenses: ["hardware_interfaces_license"],
 }
 
-cc_library_shared {
-    name: "android.hardware.vibrator@1.0-impl",
-    defaults: ["hidl_defaults"],
-    vendor: true,
-    relative_install_path: "hw",
-    srcs: ["Vibrator.cpp"],
-    shared_libs: [
-        "libhidlbase",
-        "liblog",
-        "libutils",
-        "libhardware",
-        "android.hardware.vibrator@1.0",
+cc_test {
+    name: "VtsHalWeaverTargetTest",
+    defaults: [
+        "VtsHalTargetTestDefaults",
+        "use_libaidlvintf_gtest_helper_static",
     ],
-}
-
-cc_binary {
-    name: "android.hardware.vibrator@1.0-service",
-    defaults: ["hidl_defaults"],
-    init_rc: ["android.hardware.vibrator@1.0-service.rc"],
-    vendor: true,
-    relative_install_path: "hw",
-    srcs: ["service.cpp"],
-
+    srcs: ["VtsHalWeaverTargetTest.cpp"],
     shared_libs: [
-        "libhidlbase",
-        "liblog",
-        "libutils",
-        "libhardware",
-        "android.hardware.vibrator@1.0",
-        "libhwbinder",
+        "libbinder_ndk",
+        "libbase",
     ],
-    arch: {
-        arm: {
-            cflags: [
-                "-DARCH_ARM_32"
-            ],
-        },
-    },
+    static_libs: ["android.hardware.weaver-V2-ndk"],
+    test_suites: [
+        "general-tests",
+        "vts",
+    ],
 }
